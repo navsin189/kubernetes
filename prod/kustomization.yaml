@@ -1,0 +1,4 @@
+configMapGenerator:
+- name: example-configmap-1
+  files:
+  - plain_text_variable_file.txt
