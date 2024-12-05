@@ -51,3 +51,32 @@ Source - [FreeCodeCamp](https://www.freecodecamp.org/news/what-is-a-helm-chart-t
 
 #### Notes
 - You can create a directory and populate with **Chart.yaml** and **values.yaml** *(if needed)* and helm will recognize it and show the details using the above command.
+
+### SETUP KUBE-PROMETHEUS-STACK USING HELM
+- Everything seems more clear with a practical and I'm on it.
+- As we know Prometheus is a monitoring tool that collects data from targets, represent in graph and alerts when some bad happened.
+- I'm setting up Kubernetes in my local machine and my machine is not very powerful. So, the following tools I need to perform this practical
+  - Vagrant - A tool by Hashicorp to create a VM using Ruby scripts.
+  - Oracle Virtual box - This is needed by Vagrant to launch VMs.
+
+- After installation, clone [Vagrant-K3S](https://github.com/navsin189/vagrant-ansible-k3s.git) repo and then, do the following
+```
+cd masternode
+vagrant up
+# after successful boot
+vagrant ssh
+sudo systemctl stop firewalld
+sudo setenforce 0
+
+# if ansible fails then run this command
+curl -sfL https://get.k3s.io | INSTALL_K3S_SELINUX_WARN=true INSTALL_K3S_SKIP_SELINUX_RPM=true K3S_KUBECONFIG_MODE=644 K3S_TOKEN=qwerty sh -
+
+/etc/systemd/system/k3s.service
+
+ExecStart=/usr/local/bin/k3s \
+    server \
+    --node-external-ip 192.168.56.50 \
+    --node-ip 192.168.56.50 \
+    --write-kubeconfig-mode "0644"
+
+```
