@@ -66,9 +66,11 @@ vagrant up
 # after successful boot
 vagrant ssh
 sudo systemctl stop firewalld
-sudo setenforce 0
+sudo systemctl disable firewalld
+sudo setenforce 0 # update /root/.bashrc for this command
 
-# if ansible fails then run this command
+# Well with new image used to launch VMs, ansible will not run to setup k3s. To do it manually run
+
 curl -sfL https://get.k3s.io | INSTALL_K3S_SELINUX_WARN=true INSTALL_K3S_SKIP_SELINUX_RPM=true K3S_KUBECONFIG_MODE=644 K3S_TOKEN=qwerty sh -
 
 /etc/systemd/system/k3s.service
@@ -80,3 +82,21 @@ ExecStart=/usr/local/bin/k3s \
     --write-kubeconfig-mode "0644"
 
 ```
+-  same goes for agent on worker node
+```
+cd workernode
+vagrant up
+vagrant shh
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+sudo setenforce 0 # update /root/.bashrc for this command
+
+curl -sfL https://get.k3s.io | INSTALL_K3S_SELINUX_WARN=true INSTALL_K3S_SKIP_SELINUX_RPM=true K3S_KUBECONFIG_MODE=644 K3S_TOKEN=qwerty K3S_URL: https://192.168.56.50:6443 sh -
+
+systemctl status k3s-agent
+```
+
+- On master node
+  - `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`
+  - `helm repo update`
+  - `helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack`

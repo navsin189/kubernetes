@@ -1,0 +1,12 @@
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "demo-cluster"
+  namespace: test-clickhouse-operator
+spec:
+  configuration:
+    clusters:
+      - name: "shard2-repl2"
+        layout:
+          shardsCount: 2
+          replicasCount: 2

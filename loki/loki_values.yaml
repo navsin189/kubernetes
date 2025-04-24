@@ -1,0 +1,78 @@
+deploymentMode: SingleBinary
+
+loki:
+  storage:
+    type: filesystem
+    filesystem:
+      chunks_directory: /var/loki/chunks
+      rules_directory: /var/loki/rules
+      admin_api_directory: /var/loki/admin
+
+    # Loki now supports using thanos storage clients for connecting to object storage backend.
+    # This will become the default way to configure storage in a future releases.
+    use_thanos_objstore: false
+
+    # object_store:
+    #   # Type of object store. Valid options are: s3, gcs, azure
+    #   type: s3
+    #   # Optional prefix for storage keys
+    #   storage_prefix: null
+    #   # S3 configuration (when type is "s3")
+    #   s3:
+    #     # S3 endpoint URL
+    #     endpoint: null
+    #     # Optional region
+    #     region: null
+    #     # Optional access key
+    #     access_key_id: null
+    #     # Optional secret key
+    #     secret_access_key: null
+    #     # Optional. Enable if using self-signed TLS
+    #     insecure: false
+    #     # Optional server-side encryption configuration
+    #     sse: {}
+    #     # Optional HTTP client configuration
+    #     http: {}
+
+    #   # GCS configuration (when type is "gcs")
+    #   gcs:
+    #     # Name of the bucket
+    #     bucket_name: null
+    #     # Optional service account JSON
+    #     service_account: null
+
+    #   # Azure configuration (when type is "azure")
+    #   azure:
+    #     # Storage account name
+    #     account_name: null
+    #     # Optional storage account key
+    #     account_key: null
+gateway:
+  service:
+    type: NodePort
+    # -- ClusterIP of the gateway service
+    nodePort: 3100
+
+ingester:
+  persistence:
+    # -- Enable creating PVCs which is required when using boltdb-shipper
+    enabled: false
+    # -- Use emptyDir with ramdisk for storage. **Please note that all data in ingester will be lost on pod restart**
+    inMemory: false
+    # -- List of the ingester PVCs
+    # @notationType -- list
+    claims:
+      - name: data
+        size: 30Gi
+        #   -- Storage class to be used.
+        #   If defined, storageClassName: <storageClass>.
+        #   If set to "-", storageClassName: "", which disables dynamic provisioning.
+        #   If empty or set to null, no storageClassName spec is
+        #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS, and OpenStack).
+        storageClass: null
+        # - name: wal
+        #   size: 150Gi
+    # -- Enable StatefulSetAutoDeletePVC feature
+    enableStatefulSetAutoDeletePVC: false
+    whenDeleted: Retain
+    whenScaled: Retain
